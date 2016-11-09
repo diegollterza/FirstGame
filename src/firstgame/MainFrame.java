@@ -18,6 +18,9 @@ public class MainFrame extends javax.swing.JFrame{
     private Sprite teste;
     private int bound = 50;
     private BufferStrategy bs;
+    private Keys key;
+    private Controls controls;
+    private Controller controller;
     /**
      *
      */
@@ -29,6 +32,10 @@ public class MainFrame extends javax.swing.JFrame{
         teste.setHeight(20);
         teste.setRate(10);
         startLoop();
+        key = new Keys();
+        controls = new Controls();
+        controller = new Controller(controls, key);
+        this.addKeyListener(controller);
     }
     
     public void renderGraphics(){
@@ -48,6 +55,21 @@ public class MainFrame extends javax.swing.JFrame{
             getBufferStrategy().show();
     }
     
+    public void updateControls(){
+        if(key.right.isDown){
+            teste.moveRight();
+        }
+        if(key.left.isDown){
+            teste.moveLeft();
+        }
+        if(key.up.isDown){
+            teste.moveUp();
+        }
+        if(key.down.isDown){
+            teste.moveDown();
+        }
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -135,6 +157,7 @@ public class MainFrame extends javax.swing.JFrame{
             teste.update();
             renderGraphics();
             paintScreen();
+            updateControls();
         }
         }
     }

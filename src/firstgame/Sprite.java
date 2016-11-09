@@ -10,8 +10,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -26,6 +24,7 @@ public class Sprite {
     private int rows, columns;
     private int x = 0,y = 0;
     private int height = 0, width = 0;
+    private Point point;
     
     public Sprite(){
         image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
@@ -95,18 +94,29 @@ public class Sprite {
         }
     }
     
-    private void updateY(){
+    public void updateY(){
         y++;
         if(y==rows) y = 0;
     }
     
-    private void updateHeight(){
-        height += speed;
+    public void moveUp(){
+        if(height > 0) height -= speed;
     }
     
-    private void updateWidth(){
-        width += speed;
+    public void moveDown(){
+        if(height < point.y) height += speed;
     }
+    
+    public void moveLeft(){
+        if(width > 0) width -= speed;
+        
+    }
+    
+    public void moveRight(){
+        if(width < point.x) width += speed;
+        
+    }
+    
     
     public void setHeight(int height){
         this.height = height;
@@ -118,8 +128,6 @@ public class Sprite {
     
     public void update(){
         rate_tick++;
-        updateHeight();
-        updateWidth();
         updateX();
         updateY();
         
@@ -148,6 +156,15 @@ public class Sprite {
     public Point getPosition(){
         return new Point(width, height);
     }
+    
+    public void draw(Graphics g){
+        g.drawImage(getSprite(), width, height,null);
+    }
+    
+    public void setBounds(int x,int y){
+        point = new Point(x,y);;
+    }
+    
     
 }
 
