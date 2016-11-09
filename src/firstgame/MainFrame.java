@@ -5,18 +5,22 @@
  */
 package firstgame;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
 
 /**
  *
  * @author diego
  */
-public class MainFrame extends javax.swing.JFrame implements Runnable{
+public class MainFrame extends javax.swing.JFrame{
 
     private Sprite teste;
-    Thread updater;
-    
-    
+    private int bound = 50;
+    private BufferStrategy bs;
+    /**
+     *
+     */
     public MainFrame() {
         initComponents();
         String path = getClass().getResource("animacao1.png").getPath();
@@ -24,15 +28,25 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         teste.setColumns(10);
         teste.setHeight(20);
         teste.setRate(10);
-        updater = new Thread(this);
-        updater.start();
+        startLoop();
     }
     
-    public void paint(Graphics g){
-        super.paint(g);
-        g.drawImage(teste.getSprite(), teste.getPosition().x,teste.getPosition().y,rootPane);
+    public void renderGraphics(){
+        teste.setBounds(getContentPane().getWidth()-bound, getContentPane().getHeight()-bound);
+        Graphics g = bs.getDrawGraphics();
+        Graphics g2 = g.create(bound, bound, getContentPane().getWidth()-bound-50, getContentPane().getHeight()-bound);
+        g2.setColor(Color.white);
+        g2.fillRect(0, 0, getContentPane().getWidth(), getContentPane().getHeight());
+        teste.draw(g2);
+        g.dispose();
+        g2.dispose();
     }
     
+    
+    public void paintScreen() {
+        if(!bs.contentsLost())
+            getBufferStrategy().show();
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,14 +108,22 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         });
     }
 
-    @Override
-    //First Game-loop, still simple
-    public void run() {
+    private void startLoop() {
+        createBufferStrategy(2);
+        bs = getBufferStrategy();
+        Thread t = new Thread(){
+        public void run() {
+        gameLoop();
+        }
+    };
+        t.start();
+    }
+    
+    private void gameLoop(){
         int FPS = 60;
         double OPTIMAL = 1000000000/FPS;
         long initial = System.nanoTime();
         double delta = 0;
-        
         
         while(true){
         long now = System.nanoTime();
@@ -111,11 +133,15 @@ public class MainFrame extends javax.swing.JFrame implements Runnable{
         if(delta >= 1){
             delta = 0;
             teste.update();
-            repaint();
+            renderGraphics();
+            paintScreen();
+        }
         }
     }
-    }
+}
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-}
+
