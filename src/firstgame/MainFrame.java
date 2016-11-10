@@ -26,11 +26,13 @@ public class MainFrame extends javax.swing.JFrame{
      */
     public MainFrame() {
         initComponents();
-        String path = getClass().getResource("animacao1.png").getPath();
+        String path = getClass().getResource("animacao2.png").getPath();
         teste = new Sprite(path);
-        teste.setColumns(10);
+        teste.setColumns(8);
+        teste.setRows(4);
         teste.setHeight(20);
-        teste.setRate(10);
+        teste.setRate(5);
+        teste.hasDirections = true;
         startLoop();
         key = new Keys();
         controls = new Controls();
@@ -39,7 +41,7 @@ public class MainFrame extends javax.swing.JFrame{
     }
     
     public void renderGraphics(){
-        teste.setBounds(getContentPane().getWidth()-bound, getContentPane().getHeight()-bound);
+        teste.setBounds(getContentPane().getWidth()-bound - 50, getContentPane().getHeight()-bound);
         Graphics g = bs.getDrawGraphics();
         Graphics g2 = g.create(bound, bound, getContentPane().getWidth()-bound-50, getContentPane().getHeight()-bound);
         g2.setColor(Color.white);
@@ -68,7 +70,11 @@ public class MainFrame extends javax.swing.JFrame{
         if(key.down.isDown){
             teste.moveDown();
         }
-        
+        if(key.isMoving()){
+            teste.isMoving = true;
+        }else{
+            teste.isMoving = false;
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.

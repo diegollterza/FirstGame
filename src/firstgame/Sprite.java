@@ -23,13 +23,16 @@ public class Sprite {
     private int speed, speed_tick = 0;
     private int rows, columns;
     private int x = 0,y = 0;
-    private int height = 0, width = 0;
-    private Point point;
+    private int y_pos = 0, x_pos = 0;
+    private Point point_limit;
+    private int direction;
+    public boolean hasDirections = false;
+    public boolean isMoving = false;
     
     public Sprite(){
         image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         rate = 1;
-        speed = 1;
+        speed = 10;
         rows = 1;
         columns = 1;
     }
@@ -95,41 +98,44 @@ public class Sprite {
     }
     
     public void updateY(){
+        if(!hasDirections){
         y++;
         if(y==rows) y = 0;
+        }
     }
     
     public void moveUp(){
-        if(height > 0) height -= speed;
+        if(y_pos > 0) y_pos -= speed;
+        setMovementAnimation(3);
     }
     
     public void moveDown(){
-        if(height < point.y) height += speed;
+        if(y_pos < point_limit.y - getYSize()) y_pos += speed;
+        setMovementAnimation(0);
     }
     
     public void moveLeft(){
-        if(width > 0) width -= speed;
+        if(x_pos > 0) x_pos -= speed;
+        setMovementAnimation(1);
         
     }
     
     public void moveRight(){
-        if(width < point.x) width += speed;
-        
+        if(x_pos < point_limit.x - getXSize()) x_pos += speed;
+        setMovementAnimation(2);
     }
     
-    
     public void setHeight(int height){
-        this.height = height;
+        this.y_pos = height;
     }
     
     public void setWidth(int width){
-        this.width = width;
+        this.x_pos = width;
     }
     
     public void update(){
         rate_tick++;
         updateX();
-        updateY();
         
     }
     
@@ -150,21 +156,25 @@ public class Sprite {
     }
     
     public BufferedImage getSprite(){
+        if(!isMoving) return image.getSubimage(getXSize()*4, getYCoordinate(), getXSize(), getYSize());
         return image.getSubimage(getXCoordinate(), getYCoordinate(), getXSize(), getYSize());
     }
     
     public Point getPosition(){
-        return new Point(width, height);
+        return new Point(x_pos, y_pos);
     }
     
     public void draw(Graphics g){
-        g.drawImage(getSprite(), width, height,null);
+        g.drawImage(getSprite(), x_pos, y_pos,null);
     }
     
     public void setBounds(int x,int y){
-        point = new Point(x,y);;
+        point_limit = new Point(x,y);
     }
     
+    public void setMovementAnimation(int direction){
+        y = direction;
+    }
     
 }
 

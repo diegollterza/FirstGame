@@ -14,5 +14,15 @@ public class Keys {
     public Key down = new Key();
     public Key left = new Key();
     public Key right = new Key();
-    public Key action = new Key();   
+    public Key action = new Key();
+    
+    public boolean isMoving(){
+        if(up.isDown||down.isDown||right.isDown||left.isDown) return true;
+        return false;
+    }
+    
+    public boolean isAction(){
+        if(action.isDown) return true;
+       return false;
+    }
 }
